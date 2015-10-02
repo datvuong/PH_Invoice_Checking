@@ -1,0 +1,5 @@
+cat("Versions: 20150914\r\n")
+install.packages("dplyr", repos = "http://cran.stat.upd.edu.ph/")
+install.packages("magrittr", repos = "http://cran.stat.upd.edu.ph/")
+install.packages("lubridate", repos = "http://cran.stat.upd.edu.ph/")
+install.packages("reshape2", repos = "http://cran.stat.upd.edu.ph/")
