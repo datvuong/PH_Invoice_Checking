@@ -252,16 +252,9 @@ for (iRateCard in rateCards){
                 mutate(POD_Scanned=ifelse(Tracking.No %in% podData$Tracking.Number,
                                           "Yes","No"))
             
-            Final_ok <- filter(Final, ManualCheck=="No")
-            Final_manual_check <- filter(Final, ManualCheck=="Yes")
-            
-            manualCheck <- manualCheck + nrow(filter(Final, ManualCheck=="Yes"))
-            totalCheck <- totalCheck + nrow(Final)
-            
-            write.csv(Final_ok, file = file.path(outputFolder,iRateCard,paste0(iFileName,"_ok.csv")),
+            write.csv(Final, file = file.path(outputFolder,iRateCard,paste0(iFileName,".csv")),
                       row.names = FALSE)
-            write.csv(Final_manual_check, file = file.path(outputFolder,iRateCard,paste0(iFileName,"_manual_check.csv")),
-                      row.names = FALSE)
+            
             i <- i + 1
             setTxtProgressBar(pb, i)
             trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
