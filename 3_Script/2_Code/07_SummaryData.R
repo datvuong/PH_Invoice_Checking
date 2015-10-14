@@ -30,10 +30,10 @@ batchSummary <- function(rDataFolder){
         for (iFile in list.files(file.path(iInvoiceFolder))){
             if(file_ext(iFile)=="csv"){
                 fileName <- gsub(".csv","",iFile)
-                okFile <- file.path(outputFolder,iRateCard,paste0(fileName,"_ok.csv"))
-                
-                currentInvoice <- read.csv(file.path(okFile),
+                okFile <- file.path(outputFolder,iRateCard,paste0(fileName,".csv"))
+                invoiceData <- read.csv(file.path(okFile),
                                            stringsAsFactors = FALSE)
+                currentInvoice <- filter(invoiceData, ManualCheck=="No")
                 variance <- sum(currentInvoice$Variance)
                 No_Manual_Check_count <- nrow(currentInvoice)
                 LBC_TotalAmount <- sum(currentInvoice$Total.Amount)
@@ -42,9 +42,8 @@ batchSummary <- function(rDataFolder){
                 if (is.null(rawData)) rawData <- currentInvoice
                 else rawData <- rbind_list(rawData,currentInvoice)
                 
-                manualFile <- file.path(outputFolder,iRateCard,paste0(fileName,"_manual_check.csv"))
-                currentInvoice <- read.csv(file.path(manualFile),
-                                           stringsAsFactors = FALSE)
+                currentInvoice <- filter(invoiceData, ManualCheck=="Yes")
+                
                 variance_manual <- sum(currentInvoice$Variance)
                 Manual_check_Count <- nrow(currentInvoice)
                 LBC_TotalAmount_eThreshold <- sum(currentInvoice$Total.Amount)
