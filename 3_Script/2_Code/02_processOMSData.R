@@ -13,9 +13,6 @@ loadOMSData <- function(rDataFolder){
     locationTree <- read.csv(file.path(inputFolder,"ReferenceData/Location_Tree.csv"),
                              stringsAsFactors = FALSE)
     
-    setClass('myDateTime')
-    setAs("character","myDateTime", function(from) as.POSIXct("1900-01-01", format("%Y-%m-%d"), tz = "Asia/Manila") + ddays(as.numeric(from)-2))
-    
     i <- i + 1
     setTxtProgressBar(pb, i)
     # Load OMS Data
