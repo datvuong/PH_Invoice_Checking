@@ -189,7 +189,6 @@ for (iRateCard in rateCards){
             }else{
                 InvoiceDataRateCalculated %<>%
                     mutate(ManualCheck=ifelse(is.na(Order.Number) | Duplicated=="Yes" |
-                                                  (Is.COD=="Yes" & Payment.Method!="CashOnDelivery") |
                                                   (Variance>(total_Amount_Percentage_Threshold*TotalAmount_cal) &
                                                        Variance>Total_Amount_Variance_Threshold),"Yes","No"))
             }
