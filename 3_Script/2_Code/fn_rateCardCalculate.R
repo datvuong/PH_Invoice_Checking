@@ -1,5 +1,5 @@
 
-rateCardCalcuate <- function(rDataFolder,InvoiceDataOrderMapped, rateCard, total_Amount_Percentage_Threshold, Total_Amount_Variance_Threshold){
+rateCardCalculate <- function(rDataFolder,InvoiceDataOrderMapped, rateCard, total_Amount_Percentage_Threshold, Total_Amount_Variance_Threshold){
     load(file.path(rDataFolder,"commonVariable.RData"))
     
     # Load Area Code Data

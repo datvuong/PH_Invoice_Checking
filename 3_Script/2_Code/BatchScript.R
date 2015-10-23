@@ -1,3 +1,4 @@
+##### Initial Setup #####
 library(methods)
 suppressWarnings(suppressMessages(library(dplyr)))
 suppressWarnings(suppressMessages(library(magrittr)))
@@ -34,8 +35,7 @@ trackingLogDF <- data.frame(JobName=character(),
                             Timestamp=as.POSIXct(character()),
                             Description=character())
 
-trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
-                             "Initial_Setup", "Start", "Step Note")
+##### Init Running Variables #####
 
 dateFolder <- readChar("../../1_Input/RunningFolder.txt",
                        file.info("../../1_Input/RunningFolder.txt")$size)
@@ -49,18 +49,24 @@ dir.create(rDataFolder, showWarnings = FALSE)
 save(dateFolder,inputFolder,outputFolder,rDataFolder,
      file = file.path(rDataFolder,"commonVariable.RData"))
 
-source("../2_Code/01_Loading_Manual_Data.R")
-source("../2_Code/02_processOMSData.R")
-source("../2_Code/03_RateCardVerified.R")
-source("../2_Code/03_RateCardVerified_2.R")
-source("../2_Code/04_Duplicated_Invoice_Check.R")
-source("../2_Code/05_Mapped_LBC_Monitor_Data.R")
-source("../2_Code/06_POD_Data.R")
-source("../2_Code/07_SummaryData.R")
+##### Load Data Processing Functions #####
+
+trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
+                             "Initial_Setup", "Start", "Step Note")
+
+source("../2_Code/fn_loadInvoiceData.R")
+source("../2_Code/fn_loadOMSData.R")
+source("../2_Code/fn_rateCardCalculate.R")
+source("../2_Code/fn_rateCardCalculateOld.R")
+source("../2_Code/fn_loadValiadtedTrackingNumber.R")
+source("../2_Code/fn_loadLBCMonitoringData.R")
+source("../2_Code/fn_loadPODData.R")
+source("../2_Code/fn_batchSummary.R")
 
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "Initial_Setup", "End", "Step Note")
 
+##### Load OMS Data #####
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "01_Load_OMS_Data", "Start", "Step Note")
 cat("Loading OMS Data...\r\n")
@@ -81,6 +87,7 @@ if(file.exists(file.path("../4_RData", "omsTrackingData.RData")) &
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "01_Load_OMS_Data", "End", "Step Note")
 
+##### Load Validated Tracking Number #####
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "02_Load_Validated_TrackingNumber", "Start", "Step Note")
 cat("Loading Validated Tracking Number...\r\n")
@@ -88,6 +95,7 @@ validatedTrackingNumber <- loadValiadtedTrackingNumber(rDataFolder)
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "02_Load_Validated_TrackingNumber", "End", "Step Note")
 
+##### Load LBC Data #####
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "03_Load_LBC_Data", "Start", "Step Note")
 cat("Loading LBC Data...\r\n")
@@ -95,6 +103,7 @@ lbcMonitoringData <- loadLBCMonitoringData(rDataFolder)
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "03_Load_LBC_Data", "End", "Step Note")
 
+##### Load POD Data #####
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "04_Load_POD_Data", "Start", "Step Note")
 cat("Loading POD Data...\r\n")
@@ -104,6 +113,8 @@ trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
 
 trackingLogDF <- trackingLog(trackingLogDF, jobName, runID,
                              "04_Processing_Invoice", "Start", "Step Note")
+
+##### Processing Invoice Data #####
 cat("Processing Invoices...\r\n")
 rateCards <- c("Ratecard_Dropship_Cebu", "Ratecard_New", "Ratecard_Old", "Ratecard_Old_Regular")
 totalInvoice <- 0
@@ -162,10 +173,10 @@ for (iRateCard in rateCards){
             InvoiceDataOMSMapped %<>%
                 mutate(OMSIslandMissing=ifelse(is.na(Island),"Yes","No"))
             if(OldMethod=="Yes"){
-                InvoiceDataRateCalculated <- rateCardCalcuateOld(rDataFolder,InvoiceDataOMSMapped, iRateCard,
+                InvoiceDataRateCalculated <- rateCardCalculateOld(rDataFolder,InvoiceDataOMSMapped, iRateCard,
                                                                  Weight_different_Threshold,Absolute_weight_threshold, Total_Amount_Threshold)
             }else{
-                InvoiceDataRateCalculated <- rateCardCalcuate(rDataFolder,InvoiceDataOMSMapped, iRateCard,
+                InvoiceDataRateCalculated <- rateCardCalculate(rDataFolder,InvoiceDataOMSMapped, iRateCard,
                                                               total_Amount_Percentage_Threshold, Total_Amount_Variance_Threshold)
             }
             
